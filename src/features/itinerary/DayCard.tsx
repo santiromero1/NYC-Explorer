@@ -73,9 +73,11 @@ export function DayCard({
 
       <div className="day-body">
         {day.description && <p className="day-desc">{day.description}</p>}
-        {day.pins.map((pin) => (
+        {day.pins.map((pin, i) => (
           <div className="pin-item" key={pin.id}>
-            <span className="pin-dot" style={{ background: day.color }} />
+            <span className="pin-num" style={{ background: day.color }}>
+              {i + 1}
+            </span>
             <div className="pin-item-name">
               {pin.name}
               {pin.note && <span className="pin-item-note">{pin.note}</span>}

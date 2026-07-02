@@ -1,7 +1,7 @@
 // Shell de la app — layout mobile (mapa + sheets + bottom nav) y desktop (sidebar + mapa)
 // UX_FLOWS §0, Design Spec §6, COMPONENT_SPEC §2
 import { useEffect } from 'react';
-import { AppSection, MapMode } from './types';
+import { AppSection } from './types';
 import { useAppStore } from './store/useAppStore';
 import { useItineraryStore, findPin, storageAvailable } from './store/useItineraryStore';
 import { useItineraryUi } from './features/itinerary/useItineraryUi';
@@ -35,8 +35,6 @@ export default function App() {
   const isDesktop = useIsDesktop();
   const activeSection = useAppStore((s) => s.activeSection);
   const setSection = useAppStore((s) => s.setSection);
-  const mapMode = useAppStore((s) => s.mapMode);
-  const setMapMode = useAppStore((s) => s.setMapMode);
   const selectedNeighborhoodId = useAppStore((s) => s.selectedNeighborhoodId);
   const selectNeighborhood = useAppStore((s) => s.selectNeighborhood);
   const placing = useAppStore((s) => s.placing);
@@ -114,24 +112,6 @@ export default function App() {
 
       <div className="app-main">
         <MapContainer />
-
-        {/* Toggle de modo de mapa (Design Spec §8.5) */}
-        <div className="map-controls">
-          <div className="segmented" role="group" aria-label="Modo de mapa">
-            <button
-              className={mapMode === MapMode.Schematic ? 'active' : ''}
-              onClick={() => setMapMode(MapMode.Schematic)}
-            >
-              Esquemático
-            </button>
-            <button
-              className={mapMode === MapMode.Real ? 'active' : ''}
-              onClick={() => setMapMode(MapMode.Real)}
-            >
-              Real
-            </button>
-          </div>
-        </div>
 
         {/* Banner del modo colocar pin (UX_FLOWS §9) */}
         {hidePanelForPlacing && (

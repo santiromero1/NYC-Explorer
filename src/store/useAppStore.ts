@@ -2,7 +2,7 @@
 // (ARCHITECTURE §3, DATA_MODEL §5). Prefs persistidas en clave separada.
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { AppSection, MapMode } from '../types';
+import { AppSection } from '../types';
 import type { GeoPoint, MapViewport, NeighborhoodId, SvgPoint } from '../types';
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from '../features/map/projection';
 
@@ -20,7 +20,6 @@ export interface PlacingState {
 
 interface AppState {
   activeSection: AppSection;
-  mapMode: MapMode;
   selectedNeighborhoodId: NeighborhoodId | null;
   focusedDayId: string | null;
   selectedPinId: string | null;
@@ -30,7 +29,6 @@ interface AppState {
   hasSeenIntroHint: boolean;
 
   setSection: (s: AppSection) => void;
-  setMapMode: (m: MapMode) => void;
   selectNeighborhood: (id: NeighborhoodId | null) => void;
   setFocusedDay: (id: string | null) => void;
   selectPin: (id: string | null) => void;
@@ -46,7 +44,6 @@ export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       activeSection: AppSection.Neighborhoods,
-      mapMode: MapMode.Schematic,
       selectedNeighborhoodId: null,
       focusedDayId: null,
       selectedPinId: null,
@@ -62,7 +59,6 @@ export const useAppStore = create<AppState>()(
           selectedPinId: null,
           ...(s !== AppSection.Neighborhoods ? { selectedNeighborhoodId: null } : {}),
         }),
-      setMapMode: (m) => set({ mapMode: m }),
       selectNeighborhood: (id) => set({ selectedNeighborhoodId: id }),
       setFocusedDay: (id) => set({ focusedDayId: id }),
       selectPin: (id) => set({ selectedPinId: id }),
@@ -80,7 +76,6 @@ export const useAppStore = create<AppState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({
         activeSection: s.activeSection,
-        mapMode: s.mapMode,
         hasSeenIntroHint: s.hasSeenIntroHint,
       }),
     },

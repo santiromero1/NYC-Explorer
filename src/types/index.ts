@@ -110,11 +110,6 @@ export enum AppSection {
   Itinerary = 'itinerario',
 }
 
-export enum MapMode {
-  Schematic = 'schematic',
-  Real = 'real',
-}
-
 export interface MapViewport {
   center: GeoPoint;
   zoom: number;
