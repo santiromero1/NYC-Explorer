@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Day, GeoPoint, NeighborhoodId, Pin, SvgPoint } from '../types';
 import { dayColorForIndex, generateId } from '../lib/utils';
+import { SEED_DAYS } from '../data/seedItinerary';
+import { geoToSvg } from '../features/map/projection';
 
 export interface DayInput {
   name: string;
@@ -22,6 +24,9 @@ interface ItineraryState {
   days: Day[];
   createdCount: number; // base para asignar color por orden de creación
   updatedAt: number;
+  /** true una vez que se cargó (o se decidió no cargar) el itinerario de ejemplo. */
+  seeded: boolean;
+  seedIfEmpty: () => void;
   addDay: (data: DayInput) => Day;
   updateDay: (id: string, patch: Partial<DayInput>) => void;
   deleteDay: (id: string) => void;
@@ -49,6 +54,47 @@ export const useItineraryStore = create<ItineraryState>()(
       days: [],
       createdCount: 0,
       updatedAt: 0,
+      seeded: false,
+
+      // Carga el itinerario de ejemplo (guía NYC julio 2026) una sola vez, si está vacío.
+      seedIfEmpty: () => {
+        const { days, seeded } = get();
+        if (seeded) return;
+        if (days.length > 0) {
+          set({ seeded: true });
+          return;
+        }
+        const now = Date.now();
+        const seededDays: Day[] = SEED_DAYS.map((sd, i) => ({
+          id: generateId(),
+          name: sd.name,
+          date: sd.date,
+          neighborhoodId: sd.neighborhoodId,
+          description: sd.description,
+          color: dayColorForIndex(i),
+          order: i,
+          createdAt: now + i,
+          pins: [],
+        }));
+        seededDays.forEach((day, i) => {
+          day.pins = SEED_DAYS[i].pins.map((sp, j) => ({
+            id: generateId(),
+            dayId: day.id,
+            name: sp.name,
+            note: sp.note,
+            geo: sp.geo,
+            svg: geoToSvg(sp.geo),
+            order: j,
+            createdAt: now + i,
+          }));
+        });
+        set({
+          days: seededDays,
+          createdCount: seededDays.length,
+          seeded: true,
+          updatedAt: now,
+        });
+      },
 
       addDay: (data) => {
         const { days, createdCount } = get();
@@ -155,7 +201,12 @@ export const useItineraryStore = create<ItineraryState>()(
       name: 'nyc-explorer:itinerary:v1',
       version: 1,
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ days: s.days, createdCount: s.createdCount, updatedAt: s.updatedAt }),
+      partialize: (s) => ({
+        days: s.days,
+        createdCount: s.createdCount,
+        updatedAt: s.updatedAt,
+        seeded: s.seeded,
+      }),
     },
   ),
 );

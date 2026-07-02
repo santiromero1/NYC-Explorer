@@ -45,8 +45,9 @@ export default function App() {
   const hasSeenIntroHint = useAppStore((s) => s.hasSeenIntroHint);
   const markIntroHintSeen = useAppStore((s) => s.markIntroHintSeen);
 
-  // Hint de primer uso (UX_FLOWS §1) + aviso de storage no disponible (§14)
+  // Hint de primer uso (UX_FLOWS §1) + aviso de storage + itinerario de ejemplo
   useEffect(() => {
+    useItineraryStore.getState().seedIfEmpty();
     if (!storageAvailable) {
       toast('Tus cambios no se van a guardar en este dispositivo', 'warning', 6000);
     }

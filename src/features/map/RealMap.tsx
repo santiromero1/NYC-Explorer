@@ -8,7 +8,14 @@ import { useAppStore } from '../../store/useAppStore';
 import { useItineraryStore } from '../../store/useItineraryStore';
 import { NEIGHBORHOODS } from '../../data/neighborhoods';
 import { GRID } from '../../data/grid';
-import { svgToGeo, geoToSvg, GEO_BOUNDS } from './projection';
+import { HOOD_GEO, hoodGeoCentroid } from '../../data/neighborhoodsGeo';
+import {
+  STREET_GEO_LINES,
+  AVENUE_GEO_LINES,
+  lineAngleDeg,
+  linePointAt,
+} from '../../data/gridGeo';
+import { geoToSvg, GEO_BOUNDS } from './projection';
 
 type ML = typeof import('maplibre-gl');
 
@@ -27,18 +34,12 @@ const TILE_STYLE = {
   layers: [{ id: 'carto', type: 'raster' as const, source: 'carto' }],
 };
 
-/** Polígono geográfico de un barrio, derivado de su rect SVG (consistencia entre modos). */
-function hoodGeoPolygon(n: (typeof NEIGHBORHOODS)[number]): [number, number][] {
-  if (n.svgShape.kind !== 'rect') return [];
-  const r = n.svgShape;
-  const corners = [
-    svgToGeo({ x: r.x, y: r.y }),
-    svgToGeo({ x: r.x + r.width, y: r.y }),
-    svgToGeo({ x: r.x + r.width, y: r.y + r.height }),
-    svgToGeo({ x: r.x, y: r.y + r.height }),
-    svgToGeo({ x: r.x, y: r.y }),
-  ];
-  return corners.map((c) => [c.lng, c.lat]);
+/** Anillo cerrado [lng,lat][] del polígono geográfico REAL del barrio (neighborhoodsGeo). */
+function hoodGeoRing(n: (typeof NEIGHBORHOODS)[number]): [number, number][] {
+  const pts = HOOD_GEO[n.id];
+  const ring = pts.map((p) => [p.lng, p.lat] as [number, number]);
+  ring.push(ring[0]); // cerrar el anillo
+  return ring;
 }
 
 export function RealMap() {
@@ -129,7 +130,7 @@ export function RealMap() {
         features: NEIGHBORHOODS.map((n) => ({
           type: 'Feature' as const,
           properties: { id: n.id, color: n.color },
-          geometry: { type: 'Polygon' as const, coordinates: [hoodGeoPolygon(n)] },
+          geometry: { type: 'Polygon' as const, coordinates: [hoodGeoRing(n)] },
         })),
       },
     });
@@ -146,31 +147,15 @@ export function RealMap() {
       paint: { 'line-color': ['get', 'color'], 'line-width': 1.5, 'line-opacity': 0.9 },
     });
 
-    // Grid: streets (líneas horizontales), avenues (verticales), Broadway
-    const gridFeatures = [
-      ...GRID.streets.map((st) => ({
-        type: 'Feature' as const,
-        properties: { kind: 'street', key: st.importance === 'key' },
-        geometry: {
-          type: 'LineString' as const,
-          coordinates: [
-            [GEO_BOUNDS.west + 0.004, st.geoLat],
-            [GEO_BOUNDS.east - 0.004, st.geoLat],
-          ],
-        },
-      })),
-      ...GRID.avenues.map((av) => ({
-        type: 'Feature' as const,
-        properties: { kind: 'avenue', key: av.importance === 'key' },
-        geometry: {
-          type: 'LineString' as const,
-          coordinates: [
-            [av.geoLng, GEO_BOUNDS.south + 0.004],
-            [av.geoLng, GEO_BOUNDS.north - 0.004],
-          ],
-        },
-      })),
-    ];
+    // Grid REAL: streets y avenues siguen la inclinación (~29°) de la grilla de Manhattan
+    const gridFeatures = [...STREET_GEO_LINES, ...AVENUE_GEO_LINES].map((line) => ({
+      type: 'Feature' as const,
+      properties: { key: line.isKey },
+      geometry: {
+        type: 'LineString' as const,
+        coordinates: line.path.map((p) => [p.lng, p.lat]),
+      },
+    }));
     map.addSource('grid', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: gridFeatures },
@@ -255,42 +240,61 @@ export function RealMap() {
     const app = useAppStore.getState();
     const { days } = useItineraryStore.getState();
 
-    // Labels de barrios (solo sección Barrios)
+    // Labels de barrios en su centroide geográfico real (solo sección Barrios)
     if (app.activeSection === AppSection.Neighborhoods) {
       for (const n of NEIGHBORHOODS) {
         if (app.selectedNeighborhoodId && app.selectedNeighborhoodId !== n.id) continue;
         const el = document.createElement('div');
         el.className = 'real-label hood-name';
         el.textContent = n.name;
-        const center = svgToGeo(n.svgLabelAnchor);
+        const center = hoodGeoCentroid(n.id);
         markersRef.current.push(
           new ml.Marker({ element: el }).setLngLat([center.lng, center.lat]).addTo(map),
         );
       }
     }
 
-    // Labels del grid (solo sección Grid)
+    // Labels del grid, rotadas para seguir sus líneas (solo sección Grid)
     if (app.activeSection === AppSection.Grid) {
-      for (const st of GRID.streets) {
+      const gridLabel = (text: string, angle: number) => {
         const el = document.createElement('div');
         el.className = 'real-label';
-        el.textContent = st.label;
+        const span = document.createElement('span');
+        span.textContent = text;
+        span.style.display = 'inline-block';
+        span.style.transform = `rotate(${angle.toFixed(1)}deg)`;
+        el.appendChild(span);
+        return el;
+      };
+      // Streets: etiqueta en el extremo oeste (Hudson), alineada con la calle
+      for (const line of STREET_GEO_LINES) {
+        const p = linePointAt(line.path, 0.02);
         markersRef.current.push(
-          new ml.Marker({ element: el, anchor: 'left' })
-            .setLngLat([GEO_BOUNDS.west + 0.005, st.geoLat])
+          new ml.Marker({ element: gridLabel(line.label, lineAngleDeg(line.path)), anchor: 'left' })
+            .setLngLat([p.lng, p.lat])
             .addTo(map),
         );
       }
-      for (const av of GRID.avenues.filter((a) => a.importance === 'key')) {
-        const el = document.createElement('div');
-        el.className = 'real-label';
-        el.textContent = av.label;
+      // Avenues: solo las clave, con stagger a lo largo de la avenida para no superponerse
+      const keyAvenues = AVENUE_GEO_LINES.filter((a) => a.isKey);
+      keyAvenues.forEach((line, i) => {
+        const t = 0.3 + (i % 3) * 0.22; // stagger
+        const p = linePointAt(line.path, t);
         markersRef.current.push(
-          new ml.Marker({ element: el, anchor: 'top' })
-            .setLngLat([av.geoLng, GEO_BOUNDS.north - 0.006])
+          new ml.Marker({ element: gridLabel(line.label, lineAngleDeg(line.path)) })
+            .setLngLat([p.lng, p.lat])
             .addTo(map),
         );
-      }
+      });
+      // Broadway: etiqueta sobre la diagonal, a la altura del Upper West Side
+      const bwayPts = GRID.broadway.geoPath;
+      const bwayAnchor = bwayPts[3]; // ~72nd St
+      const bwayAngle = lineAngleDeg([bwayPts[2], bwayPts[4]]);
+      const bwayEl = gridLabel('BROADWAY', bwayAngle);
+      bwayEl.style.color = '#F7C948';
+      markersRef.current.push(
+        new ml.Marker({ element: bwayEl }).setLngLat([bwayAnchor.lng, bwayAnchor.lat]).addTo(map),
+      );
     }
 
     // Pins del itinerario (solo sección Itinerario)
