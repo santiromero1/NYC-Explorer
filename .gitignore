@@ -1,0 +1,74 @@
+# === Dependencias ===
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# === Build / output ===
+dist/
+dist-ssr/
+build/
+*.local
+
+# === Vite ===
+.vite/
+vite.config.*.timestamp-*
+
+# === PWA (generados por vite-plugin-pwa) ===
+dev-dist/
+sw.js
+workbox-*.js
+registerSW.js
+
+# === Testing / coverage ===
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+.vitest/
+
+# === Variables de entorno ===
+# En MVP no hay secrets, pero dejamos la convención lista.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === Editores / IDE ===
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === Sistema operativo ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# === Misceláneos ===
+*.tsbuildinfo
+.eslintcache
+.cache/
+tmp/
+temp/
