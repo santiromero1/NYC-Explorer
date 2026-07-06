@@ -45,7 +45,7 @@ export default function App() {
 
   // Hint de primer uso (UX_FLOWS §1) + aviso de storage + itinerario de ejemplo
   useEffect(() => {
-    useItineraryStore.getState().seedIfEmpty();
+    useItineraryStore.getState().applySeed();
     if (!storageAvailable) {
       toast('Tus cambios no se van a guardar en este dispositivo', 'warning', 6000);
     }
