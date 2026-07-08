@@ -1,148 +1,78 @@
-/* ============================================================
-   NYC Explorer — Design tokens (SPECS/03_DESIGN_SPEC.md)
-   Dark mode. Acento: amarillo taxi #F7C948.
-   ============================================================ */
+/* Design tokens — look iOS claro del diseño de Claude Design */
 :root {
-  /* Base */
-  --color-bg: #0d1117;
-  --color-bg-elevated: #010409;
-  --color-surface: #161b22;
-  --color-surface-raised: #1c2128;
-  --color-surface-overlay: #21262d;
-  --color-border: #30363d;
-  --color-border-muted: #21262d;
-  --color-text: #e6edf3;
-  --color-text-secondary: #8b949e;
-  --color-text-muted: #6e7681;
-  --color-text-on-accent: #0d1117;
+  /* superficies */
+  --bg: #e9edf0;
+  --surface: #ffffff;
+  --control: #efeff4;
+  --box: #f6f6f9;
+  --hairline: #f2f2f7;
+  --border: #ececed;
 
-  /* Acento */
-  --color-accent: #f7c948;
-  --color-accent-hover: #ffd75e;
-  --color-accent-active: #e0b330;
-  --color-accent-subtle: #3a3418;
-  --color-accent-border: #7a6a24;
+  /* texto */
+  --text: #1c1c1e;
+  --text-body: #3a3a3c;
+  --text-muted: #636366;
+  --text-secondary: #8e8e93;
+  --text-tertiary: #c7c7cc;
 
-  /* Semánticos */
-  --color-success: #3fb950;
-  --color-danger: #f85149;
-  --color-danger-subtle: #3d1a1a;
-  --color-warning: #d29922;
-  --color-info: #58a6ff;
+  /* acentos fijos del diseño */
+  --blue: #0a84ff;
+  --blue-deep: #0060d0;
+  --orange: #ff9500;
+  --orange-deep: #c86a00;
 
-  /* Agua del mapa esquemático */
-  --color-water: #12202e;
+  /* radios */
+  --r-sheet: 18px;
+  --r-card: 16px;
+  --r-control: 11px;
+  --r-box: 12px;
 
-  /* Espaciado (base 4px) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
+  /* sombras */
+  --shadow-sheet: 0 -8px 34px rgba(0, 0, 0, 0.16);
+  --shadow-sidebar: 2px 0 24px rgba(0, 0, 0, 0.07);
+  --shadow-card: 0 2px 14px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 3px 14px rgba(0, 0, 0, 0.16);
+  --shadow-pop: 0 8px 26px rgba(0, 0, 0, 0.16);
 
-  /* Radios */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 999px;
+  /* tipografía */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
 
-  /* Elevación */
-  --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --elevation-2: 0 -8px 32px rgba(0, 0, 0, 0.45);
-  --elevation-3: 0 8px 32px rgba(0, 0, 0, 0.55);
-
-  /* Motion */
-  --duration-fast: 120ms;
-  --duration-base: 220ms;
-  --duration-slow: 320ms;
-  --ease-in: cubic-bezier(0.2, 0, 0, 1);
-  --ease-out: cubic-bezier(0.4, 0, 1, 1);
-
-  /* Safe areas */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-
-  /* Layout */
-  --bottom-nav-h: 56px;
-  --sidebar-w: 380px;
+  /* motion */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* ---------- Reset & base ---------- */
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
+
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
+  padding: 0;
 }
-html {
-  -webkit-text-size-adjust: 100%;
-}
+
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 15px;
-  line-height: 1.53;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
-  overflow: hidden; /* la app es un shell fijo; el scroll vive en paneles */
 }
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
-}
+
 button {
-  cursor: pointer;
+  font-family: var(--font);
   border: none;
   background: none;
   padding: 0;
-}
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-h1,
-h2,
-h3,
-p {
-  margin: 0;
+  cursor: pointer;
+  color: inherit;
 }
 
-/* Tipografía (Design Spec §3) */
-.text-display { font-size: 32px; line-height: 36px; font-weight: 700; }
-.text-h1 { font-size: 24px; line-height: 30px; font-weight: 700; }
-.text-h2 { font-size: 20px; line-height: 26px; font-weight: 600; }
-.text-h3 { font-size: 17px; line-height: 24px; font-weight: 600; }
-.text-body-lg { font-size: 17px; line-height: 26px; }
-.text-body { font-size: 15px; line-height: 23px; }
-.text-body-sm { font-size: 13px; line-height: 19px; }
-.text-caption { font-size: 12px; line-height: 16px; font-weight: 500; }
-.text-overline {
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    transition-duration: 1ms !important;
-  }
+input,
+textarea {
+  font-family: var(--font);
 }

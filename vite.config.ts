@@ -9,16 +9,16 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'],
       manifest: {
-        name: 'NYC Explorer',
-        short_name: 'NYC Explorer',
-        description: 'Explorá Nueva York y armá tu itinerario de viaje.',
+        name: 'NY Explorer',
+        short_name: 'NY Explorer',
+        description: 'El mapa del viaje a Nueva York: itinerario, barrios, grid y subway.',
         lang: 'es',
         start_url: '/',
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#0D1117',
-        theme_color: '#0D1117',
+        background_color: '#e9edf0',
+        theme_color: '#ffffff',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -30,12 +30,21 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         runtimeCaching: [
           {
-            // Tiles del mapa real: NetworkFirst con cache chico (spec 10 §4.2)
-            urlPattern: /^https:\/\/[abcd]\.basemaps\.cartocdn\.com\/.*/i,
-            handler: 'NetworkFirst',
+            // Tiles y estilo del basemap CARTO
+            urlPattern: /^https:\/\/(basemaps|tiles\.basemaps|[abcd]\.basemaps)\.cartocdn\.com\/.*/i,
+            handler: 'CacheFirst',
             options: {
               cacheName: 'map-tiles',
-              expiration: { maxEntries: 300, maxAgeSeconds: 7 * 24 * 60 * 60 },
+              expiration: { maxEntries: 600, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          {
+            // Fotos de las paradas (no van al precache: se cachean al verlas)
+            urlPattern: /\/photos\/.*\.jpg$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'place-photos',
+              expiration: { maxEntries: 80, maxAgeSeconds: 90 * 24 * 60 * 60 },
             },
           },
         ],

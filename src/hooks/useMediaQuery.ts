@@ -1,17 +1,15 @@
 import { useSyncExternalStore } from 'react';
 
-export function useMediaQuery(query: string): boolean {
+// Breakpoint del diseño: >= 980px es desktop (sidebar), abajo es mobile (sheet)
+const QUERY = '(min-width: 980px)';
+
+export function useIsDesktop(): boolean {
   return useSyncExternalStore(
     (cb) => {
-      const mql = window.matchMedia(query);
+      const mql = window.matchMedia(QUERY);
       mql.addEventListener('change', cb);
       return () => mql.removeEventListener('change', cb);
     },
-    () => window.matchMedia(query).matches,
+    () => window.matchMedia(QUERY).matches,
   );
-}
-
-/** true en desktop (sidebar); false en mobile/tablet (sheets + bottom nav). */
-export function useIsDesktop(): boolean {
-  return useMediaQuery('(min-width: 1024px)');
 }

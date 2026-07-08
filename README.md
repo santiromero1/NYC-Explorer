@@ -1,26 +1,26 @@
-# NYC Explorer
+# NY Explorer
 
-> Explorá Nueva York visualmente y armá tu itinerario de viaje editable, desde el celular.
+> El mapa del viaje familiar a Nueva York (16–24 jul 2026): itinerario, barrios, grid y subway.
 
-**NYC Explorer** es una web app mobile-first para entender cómo está organizada Nueva York
-(barrios, sistema de calles y grilla) y planificar un viaje día por día, con lugares marcados
-sobre un mapa. Ofrece dos vistas del mapa —un mapa **esquemático** estilizado y un mapa **real**—
-y un itinerario que persiste localmente. Está pensada para quien visita la ciudad por primera vez
-y quiere algo que Google Maps no da: entender *la ciudad*, no solo *dónde está cada punto*.
+**NY Explorer** es una PWA mobile-first con una sola pantalla: el mapa real de la ciudad
+siempre de fondo (estilo claro iOS) y un bottom sheet arrastrable —sidebar en desktop— con
+cuatro modos. El diseño replica fielmente el prototipo de Claude Design
+("Mapa interactivo de Nueva York").
 
 ---
 
 ## Qué hace
 
-- **Barrios** — Manhattan dividido en sus 13 zonas principales. Tocás una zona y ves su
-  personalidad, qué esperar y sus spots clave.
-- **Calles y Grid** — explica visualmente el sistema de grilla de NYC (streets numeradas,
-  avenidas, Broadway diagonal, la 5th como divisoria este/oeste, el caos debajo de la 14th).
-- **Itinerario** — creás días, agregás lugares con pins en el mapa, editás, reordenás y borrás.
-  Todo se guarda en el navegador y sigue ahí cuando volvés.
-- **Dos mapas** — esquemático (dark, minimalista, conceptual) y real (MapLibre GL). Alternás
-  cuando querés; todos los features funcionan en ambos.
-- **Mobile-first & PWA** — instalable en el home screen, funciona con mala conexión.
+- **Itinerario** — el viaje real, día por día, con pines numerados por color de día,
+  foto real de cada parada, "cómo llegar", buscador, marcado de visitado y notas
+  (persisten en el navegador). De solo lectura por diseño.
+- **Barrios** — los barrios reales de Manhattan (NYC Open Data) coloreados sobre el mapa,
+  con descripción, qué ver y tus paradas dentro de cada uno.
+- **Calles** — el grid explicado: avenidas azules N–S, calles naranjas E–O, Broadway diagonal.
+- **Subway** — líneas y estaciones reales con los colores oficiales MTA, leyenda y la
+  estación más cercana a cada parada.
+- **Capas** — en Itinerario podés superponer Barrios/Calles/Subway sobre los pines.
+- **Offline-friendly** — datos geo y fotos empaquetados; tiles cacheados por el service worker.
 
 ---
 
@@ -29,9 +29,10 @@ y quiere algo que Google Maps no da: entender *la ciudad*, no solo *dónde está
 | Capa | Elección |
 |---|---|
 | Framework | Vite + React + TypeScript |
-| Mapa real | MapLibre GL (tiles CARTO dark, sin API key) |
-| Mapa esquemático | SVG propio |
-| Estado | Zustand + persistencia en localStorage |
+| Mapa | MapLibre GL + basemap CARTO Positron (sin API key) |
+| Datos geo | GeoJSON empaquetados (`scripts/fetch-geo.mjs`, NYC Open Data / data.ny.gov) |
+| Fotos | Wikimedia, 1 por parada (`scripts/fetch-photos.mjs`) |
+| Estado | Zustand; visitado/notas en localStorage |
 | Estilos | CSS plano con design tokens (CSS variables) |
 | PWA | vite-plugin-pwa (Workbox) |
 | Deploy | Vercel |
@@ -79,9 +80,13 @@ y recién después se programa. Todos los specs están en [`SPECS/`](SPECS/).
 | 05 | [Technical Architecture](SPECS/05_TECHNICAL_ARCHITECTURE.md) | Stack, estructura, estado, arquitectura del mapa, performance |
 | 06 | [Data Model](SPECS/06_DATA_MODEL.md) | Tipos TypeScript de todas las estructuras de datos |
 | 07 | [Component Spec](SPECS/07_COMPONENT_SPEC.md) | Inventario de componentes en árbol |
-| 08 | [Feature Specs](SPECS/08_FEATURE_SPECS/) | [Map Core](SPECS/08_FEATURE_SPECS/MAP_CORE.md) · [Barrios](SPECS/08_FEATURE_SPECS/BARRIOS.md) · [Grid](SPECS/08_FEATURE_SPECS/GRID.md) · [Itinerary](SPECS/08_FEATURE_SPECS/ITINERARY.md) |
+| 08 | [Feature Specs](SPECS/08_FEATURE_SPECS/) | [Map Core](SPECS/08_FEATURE_SPECS/MAP_CORE.md) · [Barrios](SPECS/08_FEATURE_SPECS/BARRIOS.md) · [Grid](SPECS/08_FEATURE_SPECS/GRID.md) · [Itinerary](SPECS/08_FEATURE_SPECS/ITINERARY.md) · [Subway](SPECS/08_FEATURE_SPECS/SUBWAY.md) |
 | 09 | [Testing Spec](SPECS/09_TESTING_SPEC.md) | Estrategia de testing por capa, casos críticos |
 | 10 | [Deployment](SPECS/10_DEPLOYMENT.md) | Deploy, CI, PWA, env vars, checklist de go-live |
+| 11 | [Redesign v2](SPECS/11_REDESIGN_V2.md) | **El rediseño actual** (Claude Design): qué cambió y qué supersede |
+
+El sistema de diseño vigente está en [DESIGN.md](DESIGN.md) y el contexto de producto en
+[PRODUCT.md](PRODUCT.md).
 
 ---
 

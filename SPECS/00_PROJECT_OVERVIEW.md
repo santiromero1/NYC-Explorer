@@ -4,6 +4,14 @@
 > entra en el MVP y qué queda para después, cómo sabemos si funcionó, e índice a todos los
 > demás specs. Si sólo vas a leer un archivo, leé este.
 
+> ⚠️ **Rediseño v2 (jul 2026).** La app fue rediseñada para ser fiel al proyecto de
+> Claude Design ("Mapa interactivo de Nueva York"): una sola pantalla con mapa claro
+> (CARTO Positron) + sheet arrastrable con 4 modos (Barrios/Calles/Subway/Itinerario),
+> itinerario real de solo lectura, datos geo reales empaquetados y foto por parada.
+> Ver **[11_REDESIGN_V2.md](11_REDESIGN_V2.md)** y **DESIGN.md** (raíz): superseden lo
+> que contradigan de este documento y de los specs 02–08 (p. ej. el mapa esquemático
+> y el itinerario editable ya no existen).
+
 ---
 
 ## 1. Qué es NYC Explorer
