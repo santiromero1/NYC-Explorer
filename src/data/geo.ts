@@ -163,17 +163,18 @@ export function nearestStations(): Map<string, string> {
   return _nearest;
 }
 
-// ---- Colores MTA y leyenda del subway (mismos datos que el prototipo)
+// ---- Colores MTA y leyenda del subway (mismos datos que el prototipo).
+// `routes` alimenta el filtro por línea (color de troncal = grupo).
 export const SUBWAY_LEGEND = [
-  { label: '1 · 2 · 3', color: '#EE352E', note: 'Broadway–7 Av (rojo)' },
-  { label: '4 · 5 · 6', color: '#00933C', note: 'Lexington Av (verde)' },
-  { label: '7', color: '#B933AD', note: 'Flushing (violeta)' },
-  { label: 'A · C · E', color: '#2850AD', note: '8 Av (azul)' },
-  { label: 'B · D · F · M', color: '#FF6319', note: '6 Av (naranja)' },
-  { label: 'N · Q · R · W', color: '#FCCC0A', note: 'Broadway (amarillo)' },
-  { label: 'L', color: '#A7A9AC', note: '14 St crosstown (gris)' },
-  { label: 'J · Z', color: '#996633', note: 'Nassau St (marrón)' },
-  { label: 'G', color: '#6CBE45', note: 'Crosstown Brooklyn/Queens' },
+  { label: '1 · 2 · 3', color: '#EE352E', note: 'Broadway–7 Av (rojo)', routes: ['1', '2', '3'] },
+  { label: '4 · 5 · 6', color: '#00933C', note: 'Lexington Av (verde)', routes: ['4', '5', '6'] },
+  { label: '7', color: '#B933AD', note: 'Flushing (violeta)', routes: ['7'] },
+  { label: 'A · C · E', color: '#2850AD', note: '8 Av (azul)', routes: ['A', 'C', 'E'] },
+  { label: 'B · D · F · M', color: '#FF6319', note: '6 Av (naranja)', routes: ['B', 'D', 'F', 'M'] },
+  { label: 'N · Q · R · W', color: '#FCCC0A', note: 'Broadway (amarillo)', routes: ['N', 'Q', 'R', 'W'] },
+  { label: 'L', color: '#A7A9AC', note: '14 St crosstown (gris)', routes: ['L'] },
+  { label: 'J · Z', color: '#996633', note: 'Nassau St (marrón)', routes: ['J', 'Z'] },
+  { label: 'G', color: '#6CBE45', note: 'Crosstown Brooklyn/Queens', routes: ['G'] },
 ];
 
 // ---- Grid de Manhattan para la capa "Calles" (aproximado, para orientación)

@@ -799,21 +799,67 @@
 }
 
 /* ============ subway ============ */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.legend-reset {
+  flex: none;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font: 600 12px var(--font);
+  background: var(--control);
+  color: var(--text-body);
+  transition: transform 160ms var(--ease-out);
+}
+.legend-reset:active {
+  transform: scale(0.96);
+}
+
 .subway-legend-row {
   display: flex;
   align-items: center;
   gap: 11px;
   padding: 7px 4px;
+  width: 100%;
+  text-align: left;
   border-top: 1px solid var(--hairline);
+  border-radius: 8px;
 }
 .subway-legend-row:first-of-type {
   border-top: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  button.subway-legend-row:hover {
+    background: #f7f7f9;
+  }
 }
 .subway-bar {
   width: 30px;
   height: 10px;
   border-radius: 5px;
   flex: none;
+  transition: opacity 150ms ease;
+}
+.subway-state {
+  flex: none;
+  width: 16px;
+  font: 700 12px var(--font);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+.subway-legend-row.off .subway-bar {
+  opacity: 0.22;
+}
+.subway-legend-row.off .subway-label,
+.subway-legend-row.off .subway-note {
+  color: var(--text-tertiary);
+}
+.subway-legend-row .subway-label,
+.subway-legend-row .subway-note {
+  transition: color 150ms ease;
 }
 .subway-label {
   font: 700 13.5px var(--font);

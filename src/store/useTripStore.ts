@@ -32,6 +32,8 @@ interface TripState {
   ovBarrios: boolean;
   ovCalles: boolean;
   ovSubway: boolean;
+  /** Grupos de líneas de subway ocultos, por color de troncal (leyenda). */
+  subwayOff: Record<string, boolean>;
   visited: Record<string, boolean>;
   notes: Record<string, string>;
   /** Snap pedido del sheet mobile; el sheet lo aplica y lo actualiza al arrastrar. */
@@ -45,6 +47,8 @@ interface TripState {
   selectPlace: (id: string | null) => void;
   selectNb: (name: string | null) => void;
   toggleOverlay: (k: 'barrios' | 'calles' | 'subway') => void;
+  toggleSubwayGroup: (color: string) => void;
+  showAllSubway: () => void;
   toggleVisited: (id: string) => void;
   setNote: (id: string, text: string) => void;
   setSnap: (s: SheetSnap) => void;
@@ -60,6 +64,7 @@ export const useTripStore = create<TripState>((set, get) => ({
   ovBarrios: false,
   ovCalles: false,
   ovSubway: false,
+  subwayOff: {},
   visited: readJson(VISITED_KEY, {}),
   notes: readJson(NOTES_KEY, {}),
   snap: 'mid',
@@ -79,6 +84,12 @@ export const useTripStore = create<TripState>((set, get) => ({
       | 'ovSubway';
     set({ [key]: !get()[key] } as Partial<TripState>);
   },
+  toggleSubwayGroup: (color) => {
+    const subwayOff = { ...get().subwayOff, [color]: !get().subwayOff[color] };
+    if (!subwayOff[color]) delete subwayOff[color];
+    set({ subwayOff });
+  },
+  showAllSubway: () => set({ subwayOff: {} }),
   toggleVisited: (id) => {
     const visited = { ...get().visited, [id]: !get().visited[id] };
     writeJson(VISITED_KEY, visited);

@@ -5,7 +5,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTripStore, type Mode } from '../../store/useTripStore';
 import { allStops, type Stop } from '../../data/itinerary';
-import { NB_FC, nbColor, neighborhoods, neighborhoodByName, CALLES, SUBWAY_LINES_FC, SUBWAY_STATIONS_FC } from '../../data/geo';
+import { NB_FC, nbColor, neighborhoods, neighborhoodByName, CALLES, SUBWAY_LINES_FC, SUBWAY_STATIONS_FC, SUBWAY_LEGEND } from '../../data/geo';
 
 const STYLE_URL = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const GLYPHS_URL = 'https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf';
@@ -319,6 +319,28 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
     }
   }
 
+  // filtro por línea de subway: oculta troncales apagadas y las estaciones
+  // que no tienen ninguna ruta habilitada
+  function applySubwayFilter(map: maplibregl.Map) {
+    if (!map.getLayer('subway-lines')) return;
+    const off = useTripStore.getState().subwayOff;
+    const enabled = SUBWAY_LEGEND.filter((g) => !off[g.color]);
+    if (enabled.length === SUBWAY_LEGEND.length) {
+      map.setFilter('subway-lines', null);
+      map.setFilter('subway-stations', null);
+      return;
+    }
+    const colors = enabled.map((g) => g.color);
+    map.setFilter('subway-lines', ['in', ['get', 'color'], ['literal', colors]] as never);
+    const routes = enabled.flatMap((g) => g.routes);
+    map.setFilter(
+      'subway-stations',
+      routes.length
+        ? (['any', ...routes.map((r) => ['in', r, ['get', 'lines']])] as never)
+        : (['==', ['get', 'name'], '__ninguna__'] as never),
+    );
+  }
+
   function syncLayers(map: maplibregl.Map) {
     const flags = layerFlags(useTripStore.getState());
     const vis = (ids: string[], on: boolean) => {
@@ -372,6 +394,7 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
       if (state.ovBarrios !== prev.ovBarrios || state.ovCalles !== prev.ovCalles || state.ovSubway !== prev.ovSubway) {
         syncLayers(map);
       }
+      if (state.subwayOff !== prev.subwayOff) applySubwayFilter(map);
       if (state.activeDay !== prev.activeDay) {
         syncMarkers(map);
         fitDay(state.activeDay);

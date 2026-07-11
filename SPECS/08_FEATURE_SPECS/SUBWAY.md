@@ -19,11 +19,23 @@ Modo "Subway" del segmented control. Muestra la red real de subte sobre el basem
 
 ## Panel
 
-1. Título "Subway de Nueva York" + hint de colores.
-2. Leyenda: 9 filas (barra 30×10px color MTA, rutas, avenida troncal).
+1. Título "Subway de Nueva York" + hint de colores; botón "Mostrar todas" a la derecha
+   cuando hay líneas ocultas.
+2. Leyenda: 9 filas (barra 30×10px color MTA, rutas, avenida troncal). **Cada fila es un
+   toggle**: tocarla muestra/oculta ese grupo de líneas en el mapa (fila atenuada + ✓ al
+   estar visible). Estado en `subwayOff` (zustand, por color de troncal, no persiste).
 3. "Estación más cercana a cada parada": lista de las 50 paradas con su estación
    (distancia euclídea con lng corregido ×0.76, precalculada). Tap → modo Itinerario
    con la parada seleccionada.
+
+## Filtro por línea
+
+- `subway-lines`: `setFilter` por `color` dentro de los grupos habilitados.
+- `subway-stations`: se muestra la estación si alguna de sus rutas (`lines`, substring)
+  pertenece a un grupo habilitado.
+- Con todos los grupos habilitados el filtro se quita (vuelven también S y shuttles,
+  que no tienen fila en la leyenda).
+- El filtro aplica igual cuando Subway se usa como capa superpuesta en Itinerario.
 
 ## Overlay
 
