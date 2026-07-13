@@ -613,6 +613,39 @@
   justify-content: center;
   font: 700 12.5px var(--font);
 }
+.place-badge.food {
+  background: var(--surface);
+  border: 1.5px solid;
+  font-size: 11px;
+}
+
+/* separador de bloque dentro del día (Mañana / Tarde / Noche / Para comer) */
+.block-label {
+  margin: 10px 8px 2px;
+  font: 700 11px var(--font);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.block-label.food {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+/* etiqueta de parada opcional */
+.opt-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #f2f2f5;
+  color: var(--text-secondary);
+  font: 600 10px var(--font);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
 .place-text {
   flex: 1;
   min-width: 0;
@@ -926,6 +959,27 @@
 }
 .pin.visited .pin-body {
   background: #a1a1a8;
+}
+/* pin de comida: circular, blanco con borde del color del día, sin número */
+.pin-food {
+  width: 24px;
+  height: 24px;
+}
+.pin-food .pin-body {
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--pin-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.pin-food .pin-label {
+  font-size: 10.5px;
+}
+.pin-food.visited .pin-body {
+  border-color: #a1a1a8;
+  background: #f0f0f2;
+}
+.pin-food.selected .pin-label {
+  font-size: 13px;
 }
 .pin.selected {
   width: 40px;

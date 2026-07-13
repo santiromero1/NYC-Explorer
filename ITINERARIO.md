@@ -14,147 +14,189 @@
 | Miami → Atlanta | mar 28 jul | DELTA 1295 | FLL 19:45 → ATL 21:54 |
 | Atlanta → Buenos Aires | mar 28 jul | LATAM 8873 | ATL 22:55 → EZE 09:45 (+1) |
 
-## 🏨 Hotel en Nueva York
+## 🏨 Hoteles
 
-**Courtyard by Marriott New York Manhattan / Central Park**
+**Nueva York — Courtyard by Marriott Manhattan / Central Park**
 1717 Broadway (esquina W 54th St, a 2 cuadras de Columbus Circle)
 Check-in: jue 16, 15:00 · Check-out: vie 24, 12:00 · Reserva: 97950743
 
-En Miami: Marseilles Hotel, 1741 Collins Ave, Miami Beach (check-in 15:00, reserva 1062545940) + auto con Sixt.
+**Miami — Marseilles Hotel**
+1741 Collins Ave, Miami Beach · Reserva: 1062545940 · + auto Sixt
 
 ---
 
 ## Día 1 · Jueves 16 · Llegada + Midtown
 
-Aterrizamos en JFK a las 9:10. Traslado al hotel (dejar valijas si el check-in de las 15:00 no está listo) y primer día suave por el barrio del hotel.
+Aterrizamos en JFK 9:10. Traslado al hotel (dejar valijas; check-in 15:00). Día suave por el barrio.
 
 **Mañana / mediodía**
 - Columbus Circle (la esquina del hotel)
-- Plaza Hotel
-- Caminata por la 5th Avenue
-- Rockefeller Center
-- Magnolia Bakery (merienda)
+- Plaza Hotel (Mi Pobre Angelito)
+- Apple Store 5th Ave → Blue Box Café / Le Café LV
+- Caminata por la 5th Avenue → 590 Madison (Power of Togetherness)
+- Rockefeller Center → Nintendo World (Rockefeller Plaza) · Fan Band Bank of America
+
+*Para comer:* Magnolia Bakery (merienda)
 
 **Tarde / noche**
-- Times Square (de noche, las luces son el show)
-- Whole Foods Market (súper para abastecerse, en Columbus Circle)
+- Times Square de noche
+- Whole Foods Market (súper para el hotel)
+
+*Para comer:* Smith & Wollensky · Burger Joint · Harry Cipriani · Adel's Famous Halal Food / Halal Guys (callejera) · Gray's Papaya (panchos)
+
+---
 
 ## Día 2 · Viernes 17 · Estatua de la Libertad + Downtown
 
-El día más cargado: todo Lower Manhattan a pie.
-
 **Mañana**
-- Subte hasta Whitehall Terminal
-- **Staten Island Ferry a las 9:00** — gratis, la Estatua de la Libertad se ve desde el barco
-- Battery Park
-- Charging Bull (y Fearless Girl)
-- NYSE (Bolsa de Nueva York)
-- Wall Street
+- Staten Island Ferry 9:00 — gratis, la Estatua se ve desde el barco (subte hasta Whitehall Terminal)
+- Battery Park — free tour de Civitatis 10:45
+- Charging Bull y Fearless Girl
+- NYSE · Wall Street
 - Trinity Church
+
+*Para comer:* Los Tacos No. 1 (almuerzo)
 
 **Tarde**
 - St. Paul's Chapel
 - City Hall
-- 9/11 Memorial — ver el Survival Tree
-- Oculus
-- Brookfield Place
-- One World Observatory (OWO)
+- 9/11 Memorial — ver el Survival Tree → Eataly
+- Oculus · Brookfield Place → Century 21 (outlet)
+- One World Observatory (OWO) → Philip Williams (posters)
 - South Street Seaport
 
-## Día 3 · Sábado 18 · Central Park + The Met + Harlem
+*Para comer:* ITO (sushi)
 
-**Mañana**
-- Central Park (Bethesda Terrace, Bow Bridge, The Mall)
+---
 
-**Almuerzo**
-- Barney Greengrass (clásico del Upper West Side)
-- Alternativa: Le Pain Quotidien
+## Día 3 · Sábado 18 · Central Park + The Met
 
-**Tarde**
-- The Met (Metropolitan Museum)
-- Harlem: misa gospel (averiguar horario/reserva)
-- Mt Morris Park (las casas históricas)
-- Malcolm X Blvd
+**Mañana — Central Park**
+- The Pond
+- The Mall → Bethesda Fountain (Alicia en el País de las Maravillas)
+- Cherry Hill → Bow Bridge (romántico)
+- The Lake → Strawberry Fields → The Dakota (John Lennon)
+- Belvedere Castle → Turtle Pond → Shakespeare Garden
+- Row Boat Rental (Loeb Boathouse)
 
-## Día 4 · Domingo 19 · ⚽ FINAL DEL MUNDIAL 2026
+*Para comer:* Barney Greengrass (almuerzo judío) · Pastrami Queen · Le Pain Quotidien
 
-El día entero dedicado a la Final en MetLife Stadium (East Rutherford, NJ).
+**Tarde — Museos**
+- The Met (Metropolitan Museum of Art)
+- Museo Solomon Guggenheim *(opcional)*
+- Museo de Historia Natural *(opcional)*
 
-- **NJ Transit desde Penn Station** (~40 min) — sacar tickets en la app con anticipación y salir con MUCHO tiempo
-- Sin entradas: FIFA Fan Fest o bar con pantalla grande
-- Si gana Argentina: Times Square para el caos colectivo 🇦🇷
+*Para comer:* Tavern on the Green
+
+---
+
+## Día 4 · Domingo 19 · FINAL DEL MUNDIAL 2026
+
+El día entero para la Final en MetLife Stadium (East Rutherford, NJ).
+
+- **Cómo llegar:** NJ Transit desde Penn Station (~40 min) — comprar tickets en la app con anticipación, salir con MUCHO tiempo
+- **Sin entradas:** FIFA Fan Fest o bar con pantalla grande
+- **Si gana Argentina:** Times Square
+
+---
 
 ## Día 5 · Lunes 20 · Midtown East + SUMMIT
 
 **Mañana**
 - Grand Central Terminal
 - Chrysler Building
-- Biblioteca Pública de NY (NYPL)
+- Biblioteca Pública de Nueva York
 - Bryant Park
-- Empire State (verlo desde afuera / foto)
+- Empire State (foto desde afuera)
+- Compras: Macy's · Buffalo Exchange (ropa de segunda mano)
 
 **Tarde**
-- **SUMMIT One Vanderbilt a las 14:00** (reservado)
+- SUMMIT One Vanderbilt — 14:00
 - St. Patrick's Cathedral
-- Nintendo World (Rockefeller Plaza)
+
+*Para comer:* Joe's Pizza (para llevar)
 
 **Noche**
-- Broadway (show a definir)
+- Broadway — Wicked 19:00 (broadwaydirect)
+
+---
 
 ## Día 6 · Martes 21 · Brooklyn
 
 **Mañana**
-- Cruce del **Brooklyn Bridge** (subte hasta City Hall y vuelta caminando)
-- DUMBO
+- Brooklyn Bridge — subte a City Hall, cruzar caminando
+- DUMBO · Washington Street (la foto clásica) · Manhattan Bridge Lookout
 - Empire Fulton Ferry Park
-- Time Out Market
-- Washington Street (la foto clásica)
-- Manhattan Bridge Lookout (caminar)
+- Time Out Market (rooftop)
 
-**Almuerzo** en Time Out Market o DUMBO
+*Para comer:* Grimaldi's Pizza · The River Café (formal) · Brooklyn Flea (feria debajo del puente)
 
 **Tarde**
 - Brooklyn Bridge Park
-- Williamsburg (ferry, subte o bici) — Domino Park
 - Brooklyn Heights Promenade
+- Williamsburg (ferry, subte o bici) → Domino Park → North Williamsburg ferry para volver a Manhattan
 
-## Día 7 · Miércoles 22 · High Line + Chelsea + SoHo
-
-**Mañana**
-- Hudson Yards — **The Edge** (mirador)
-- Vessel
-- High Line (caminarla hacia el sur)
-- Chelsea Market
-- Little Island
-- Meatpacking District
-
-**Tarde** (bajando hacia el sur)
-- SoHo (lindo para compras)
-- NoHo
-- Nolita
-- Little Italy
-- Chinatown
-- Columbus Park
-
-**Noche**
-- Cena: Emily (burger) o **Joe's Pizza** (la de Spider-Man)
-- Bar con jazz en vivo (Smalls o Village Vanguard)
-
-## Día 8 · Jueves 23 · MoMA + Top of the Rock
-
-Mañana libre (colchón para lo que quedó pendiente / compras).
-
-**Tarde**
-- MoMA
-- **Top of the Rock a las 19:30** (atardecer sobre Manhattan)
-
-## Día 9 · Viernes 24 · Check-out → Miami ✈️
-
-- Check-out: 12:00
-- Última vuelta por el barrio / pendientes
-- DELTA 1414 · JFK 19:55 → FLL 23:25
-- En Miami: Sixt (auto) + Marseilles Hotel (Collins Ave)
+*Para comer:* Frankel's Delicatessen (bagels)
 
 ---
 
-*Generado a partir del planner del viaje · NYC Explorer — [nyc-explorer.vercel.app](https://nyc-explorer-romerosantiago2012-8732s-projects.vercel.app)*
+## Día 7 · Miércoles 22 · High Line + Chelsea + Harlem
+
+**Mañana**
+- Hudson Yards → The Edge (mirador)
+- Vessel
+- High Line (caminar hacia el sur)
+- Meatpacking District
+- Little Island · Pier 57 (rooftop mercado) · Starbucks Reserve Roastery
+- Chelsea Market
+
+*Para comer:* Russ & Daughters (bagels) · Mercado Little Spain · La Bonbonniere / Pastis (almuerzo francés) · Tacos (Chelsea Market) · B&H (tecnología — compras)
+
+**Tarde**
+- Washington Square Park
+- SoHo (compras)
+- Harlem → Misa Gospel 17:00 (getyourguide) · Mt Morris Park (casas históricas) · Malcolm X Blvd
+
+*Para comer:* Popup Bagels
+
+**Noche**
+- Bar con jazz en vivo — Birdland Jazz Club o Village Vanguard (reservar)
+
+---
+
+## Día 8 · Jueves 23 · SoHo / NoHo / Chinatown + MoMA + Top of the Rock
+
+**Mañana**
+- SoHo (compras) → The NY Earth Room y The Broken Kilometer (arte) · The RealReal (ropa segunda mano)
+- NoHo
+- Nolita
+- Little Italy → Charly García Corner (Walker St y Cortlandt Alley)
+- Chinatown → Hop Kee (comida china)
+- Columbus Park
+
+*Para comer (zona):* Katz's Delicatessen (pastrami — When Harry Met Sally!) · Jack's Wife Freda · Eileen's Cheesecake · Emily (burger) o Hamburger America · Levain Bakery (cookies)
+
+**Tarde**
+- MoMA (Museum of Modern Art)
+
+**Atardecer**
+- Top of the Rock — 19:30
+
+**Noche (opciones)**
+Carbone · Torrisi · Balthazar · Estela · Wildair · Le French Diner · 230 Fifth (bar y terraza) · Nubeluz (Ritz, reservar) · Double Chicken Please (cócteles) · Back Room
+
+---
+
+## Día 9 · Viernes 24 · Check-out → Miami
+
+Check-out 12:00 · última vuelta por el barrio
+
+- **Vuelo:** DELTA 1414 · JFK 19:55 → FLL 23:25
+- **En Miami:** Sixt (auto) + Marseilles Hotel (Collins Ave, Miami Beach)
+
+---
+
+## Extras / Pendientes
+
+- **Los Hamptons** — Long Island / playa · alquiler Hertz por día (cerca del hotel)
+- **Woodbury Common Premium Outlets** — shopping fuera de la ciudad

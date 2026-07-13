@@ -137,7 +137,8 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
     }
   }
   function fitDay(day: number | 'all') {
-    const pts = allStops().filter((p) => day === 'all' || p.day === day);
+    // "Todo el viaje" no encuadra los extras (Woodbury, Hamptons): quedan fuera de la ciudad
+    const pts = allStops().filter((p) => (day === 'all' ? !p.extra : p.day === day));
     if (!pts.length) return;
     const b = new maplibregl.LngLatBounds();
     pts.forEach((p) => b.extend([p.lng, p.lat]));
@@ -280,11 +281,11 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
   function buildMarkers() {
     for (const stop of allStops()) {
       const el = document.createElement('div');
-      el.className = 'pin';
+      el.className = stop.kind === 'food' ? 'pin pin-food' : 'pin';
       el.style.setProperty('--pin-color', stop.color);
       el.setAttribute('role', 'button');
-      el.setAttribute('aria-label', `Parada ${stop.stop}: ${stop.name}`);
-      el.innerHTML = `<div class="pin-body"><span class="pin-label">${stop.stop}</span></div>`;
+      el.setAttribute('aria-label', stop.kind === 'food' ? `Para comer: ${stop.name}` : `Parada ${stop.stop}: ${stop.name}`);
+      el.innerHTML = `<div class="pin-body"><span class="pin-label">${stop.kind === 'food' ? '🍴' : stop.stop}</span></div>`;
       el.addEventListener('click', (ev) => {
         ev.stopPropagation();
         useTripStore.getState().selectPlace(stop.id);
@@ -315,7 +316,7 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
       el.classList.toggle('visited', visited);
       el.classList.toggle('selected', selected);
       const label = el.querySelector('.pin-label');
-      if (label) label.textContent = visited ? '✓' : String(stop.stop);
+      if (label) label.textContent = visited ? '✓' : stop.kind === 'food' ? '🍴' : String(stop.stop);
     }
   }
 

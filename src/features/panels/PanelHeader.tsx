@@ -102,7 +102,7 @@ export function PanelHeader({ dragZone }: { dragZone?: boolean }) {
                   <div className="search-result-text">
                     <div className="name">{r.name}</div>
                     <div className="meta">
-                      Día {r.day} · {r.type}
+                      {r.extra ? 'Extras' : `Día ${r.day}`} · {r.type}
                     </div>
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export function PanelHeader({ dragZone }: { dragZone?: boolean }) {
                 style={active ? { background: d.color, boxShadow: `0 2px 8px ${d.color}55` } : undefined}
                 onClick={() => setActiveDay(d.n)}
               >
-                Día {d.n}
+                {d.extra ? 'Extras' : `Día ${d.n}`}
               </button>
             );
           })}

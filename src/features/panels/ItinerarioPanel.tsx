@@ -1,7 +1,7 @@
 // Modo Itinerario: tarjeta de detalle de la parada seleccionada + lista por día.
 import { useEffect, useRef, useState } from 'react';
 import { useTripStore } from '../../store/useTripStore';
-import { DAYS, stopById } from '../../data/itinerary';
+import { DAYS, stopById, type Day, type Place } from '../../data/itinerary';
 import { XIcon } from '../../components/icons';
 
 function DetailCard() {
@@ -47,10 +47,10 @@ function DetailCard() {
       <div className="detail-body">
         <div className="detail-meta-row">
           <span className="stop-badge" style={{ background: sel.color }}>
-            {sel.stop}
+            {sel.kind === 'food' ? '🍴' : sel.stop}
           </span>
           <span className="detail-day">
-            Día {sel.day} · {sel.dateLabel}
+            {sel.extra ? 'Extras · si sobra tiempo' : `Día ${sel.day} · ${sel.dateLabel}`}
           </span>
         </div>
         <h2 className="detail-name">{sel.name}</h2>
@@ -59,6 +59,12 @@ function DetailCard() {
           <span>{sel.type}</span>
           <span className="sep">·</span>
           <span>{sel.time}</span>
+          {sel.optional && (
+            <>
+              <span className="sep">·</span>
+              <span className="opt-tag">Opcional</span>
+            </>
+          )}
         </div>
         <p className="detail-note">{sel.note}</p>
 
@@ -88,12 +94,37 @@ function DetailCard() {
   );
 }
 
-export function ItinerarioPanel() {
-  const activeDay = useTripStore((s) => s.activeDay);
-  const setActiveDay = useTripStore((s) => s.setActiveDay);
+function PlaceRow({ p, day, badge }: { p: Place; day: Day; badge: string | number }) {
   const selId = useTripStore((s) => s.selId);
   const visited = useTripStore((s) => s.visited);
   const selectPlace = useTripStore((s) => s.selectPlace);
+  const isVisited = !!visited[p.id];
+  const isFood = typeof badge === 'string';
+  return (
+    <div className={`place-row ${selId === p.id ? 'selected' : ''}`} onClick={() => selectPlace(p.id)}>
+      <span
+        className={`place-badge ${isFood ? 'food' : ''}`}
+        style={isFood ? { color: day.color, borderColor: isVisited ? '#c7c7cc' : `${day.color}66` } : { background: isVisited ? '#c7c7cc' : day.color }}
+      >
+        {isVisited ? '✓' : badge}
+      </span>
+      <div className="place-text">
+        <div className={`place-name ${isVisited ? 'visited' : ''}`}>
+          {p.name}
+          {p.optional && <span className="opt-tag">Opcional</span>}
+        </div>
+        <div className="place-meta">
+          {p.type} · {p.time}
+        </div>
+      </div>
+      <span className="chevron">›</span>
+    </div>
+  );
+}
+
+export function ItinerarioPanel() {
+  const activeDay = useTripStore((s) => s.activeDay);
+  const setActiveDay = useTripStore((s) => s.setActiveDay);
 
   const days = DAYS.filter((d) => activeDay === 'all' || d.n === activeDay);
 
@@ -105,31 +136,25 @@ export function ItinerarioPanel() {
           <div className="day-header" onClick={() => setActiveDay(d.n)}>
             <span className="day-dot" style={{ background: d.color, boxShadow: `0 0 0 3px ${d.color}22` }} />
             <div className="day-header-text">
-              <div className="day-title">
-                Día {d.n} · {d.dateLabel}
-              </div>
+              <div className="day-title">{d.extra ? 'Extras' : `Día ${d.n} · ${d.dateLabel}`}</div>
               <div className="day-subtitle">{d.title}</div>
             </div>
             <span className="day-count">{d.places.length}</span>
           </div>
-          {d.places.map((p, i) => {
-            const isVisited = !!visited[p.id];
-            const isSel = selId === p.id;
-            return (
-              <div className={`place-row ${isSel ? 'selected' : ''}`} key={p.id} onClick={() => selectPlace(p.id)}>
-                <span className="place-badge" style={{ background: isVisited ? '#c7c7cc' : d.color }}>
-                  {isVisited ? '✓' : i + 1}
-                </span>
-                <div className="place-text">
-                  <div className={`place-name ${isVisited ? 'visited' : ''}`}>{p.name}</div>
-                  <div className="place-meta">
-                    {p.type} · {p.time}
-                  </div>
-                </div>
-                <span className="chevron">›</span>
-              </div>
-            );
-          })}
+          {d.places.map((p, i) => (
+            <div key={p.id}>
+              {p.block && p.block !== d.places[i - 1]?.block && <div className="block-label">{p.block}</div>}
+              <PlaceRow p={p} day={d} badge={i + 1} />
+            </div>
+          ))}
+          {(d.food?.length ?? 0) > 0 && (
+            <>
+              <div className="block-label food">Para comer</div>
+              {d.food!.map((p) => (
+                <PlaceRow key={p.id} p={p} day={d} badge="🍴" />
+              ))}
+            </>
+          )}
         </section>
       ))}
     </>
