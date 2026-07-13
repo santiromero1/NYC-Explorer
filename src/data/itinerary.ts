@@ -188,12 +188,13 @@ export const DAYS: Day[] = [
 export const TRIP_TITLE = 'Nueva York';
 export const TRIP_SUBTITLE = '16 – 24 jul 2026 · 9 días';
 
+// mismos colores que los polígonos de boroughs del mapa (boroughs.json)
 export const BOROUGH_LEGEND = [
-  { label: 'Manhattan', color: '#007AFF' },
-  { label: 'Brooklyn', color: '#FF9500' },
-  { label: 'Queens', color: '#34C759' },
-  { label: 'Bronx', color: '#AF52DE' },
-  { label: 'Staten I.', color: '#FF3B30' },
+  { label: 'Manhattan', color: '#9BBE4F' },
+  { label: 'Brooklyn', color: '#E25C63' },
+  { label: 'Queens', color: '#E8935E' },
+  { label: 'Bronx', color: '#E8B54A' },
+  { label: 'Staten I.', color: '#5D5FA8' },
 ];
 
 let _all: Stop[] | null = null;

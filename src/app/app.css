@@ -785,6 +785,26 @@
   font: 500 12.5px/1.35 var(--font);
   color: var(--text-secondary);
 }
+/* volver un nivel en la jerarquía NYC -> zonas -> barrios */
+.crumb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 12px 0 0;
+  padding: 6px 10px 6px 7px;
+  font: 600 13px var(--font);
+  color: var(--blue);
+  background: transparent;
+  border: none;
+  border-radius: var(--r-control);
+  cursor: pointer;
+}
+.crumb-back:hover {
+  background: var(--control);
+}
+.crumb-back:active {
+  opacity: 0.6;
+}
 
 /* ============ calles ============ */
 .calles-intro {

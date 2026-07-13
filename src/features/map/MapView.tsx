@@ -5,7 +5,21 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTripStore, type Mode } from '../../store/useTripStore';
 import { allStops, type Stop } from '../../data/itinerary';
-import { NB_FC, nbColor, neighborhoods, neighborhoodByName, CALLES, SUBWAY_LINES_FC, SUBWAY_STATIONS_FC, SUBWAY_LEGEND } from '../../data/geo';
+import {
+  NB_FC,
+  nbColor,
+  neighborhoods,
+  neighborhoodByName,
+  BOROUGHS_FC,
+  ZONES_FC,
+  boroughById,
+  zoneById,
+  zoneBarrios,
+  CALLES,
+  SUBWAY_LINES_FC,
+  SUBWAY_STATIONS_FC,
+  SUBWAY_LEGEND,
+} from '../../data/geo';
 
 const STYLE_URL = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const GLYPHS_URL = 'https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf';
@@ -29,19 +43,79 @@ const MANHATTAN_BOUNDS: [[number, number], [number, number]] = [
   [-74.02, 40.7],
   [-73.928, 40.822],
 ];
+const NYC_BOUNDS: [[number, number], [number, number]] = [
+  [-74.258, 40.493],
+  [-73.7, 40.918],
+];
+
+// La capa de barrios en modo Itinerario se adapta al zoom: lejos boroughs,
+// medio zonas de Manhattan, cerca barrios.
+const OVERLAY_ZOOM = { boroMax: 11, zoneMax: 12.75 };
+
+type BarriosLevel = 'city' | 'boro' | 'zones' | 'nb';
+function barriosLevel(s: { selBoro: string | null; selZone: string | null }): BarriosLevel {
+  if (s.selZone) return 'nb';
+  if (s.selBoro === 'manhattan') return 'zones';
+  if (s.selBoro) return 'boro';
+  return 'city';
+}
 
 interface LayerFlags {
+  boro: boolean;
+  zones: boolean;
   nb: boolean;
   calles: boolean;
   subway: boolean;
   pins: boolean;
+  /** true cuando barrios actúa como overlay del itinerario (niveles por zoom). */
+  byZoom: boolean;
 }
-function layerFlags(s: { mode: Mode; ovBarrios: boolean; ovCalles: boolean; ovSubway: boolean }): LayerFlags {
+function layerFlags(s: {
+  mode: Mode;
+  selBoro: string | null;
+  selZone: string | null;
+  ovBarrios: boolean;
+  ovCalles: boolean;
+  ovSubway: boolean;
+}): LayerFlags {
+  const overlay = s.mode === 'itinerario' && s.ovBarrios;
+  const lvl = barriosLevel(s);
   return {
-    nb: s.mode === 'barrios' || (s.mode === 'itinerario' && s.ovBarrios),
+    boro: overlay || (s.mode === 'barrios' && (lvl === 'city' || lvl === 'boro')),
+    zones: overlay || (s.mode === 'barrios' && lvl === 'zones'),
+    nb: overlay || (s.mode === 'barrios' && lvl === 'nb'),
     calles: s.mode === 'calles' || (s.mode === 'itinerario' && s.ovCalles),
     subway: s.mode === 'subway' || (s.mode === 'itinerario' && s.ovSubway),
     pins: s.mode === 'itinerario',
+    byZoom: overlay,
+  };
+}
+
+/** Patrón de rayas diagonales blancas (como el mapa impreso de la foto). */
+function hatchImage(): ImageData {
+  const c = document.createElement('canvas');
+  c.width = c.height = 12;
+  const ctx = c.getContext('2d')!;
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'square';
+  for (const off of [-12, 0, 12]) {
+    ctx.beginPath();
+    ctx.moveTo(off - 3, 15);
+    ctx.lineTo(off + 15, -3);
+    ctx.stroke();
+  }
+  return ctx.getImageData(0, 0, 12, 12);
+}
+
+function regionLabelData(fc: typeof BOROUGHS_FC) {
+  return {
+    type: 'FeatureCollection' as const,
+    features: fc.features.map((f) => ({
+      type: 'Feature' as const,
+      properties: { id: f.properties.id, label: f.properties.name.toUpperCase() },
+      geometry: { type: 'Point' as const, coordinates: f.properties.center },
+    })),
   };
 }
 
@@ -63,7 +137,7 @@ function nbLabelData() {
       .filter((n) => n.major)
       .map((n) => ({
         type: 'Feature' as const,
-        properties: { label: n.name.toUpperCase() },
+        properties: { name: n.name, label: n.name.toUpperCase() },
         geometry: { type: 'Point' as const, coordinates: n.center },
       })),
   };
@@ -144,15 +218,122 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
     pts.forEach((p) => b.extend([p.lng, p.lat]));
     safeFit(b, day === 'all' ? 12 : 15);
   }
+  function fitBarrios() {
+    const s = useTripStore.getState();
+    if (s.selNb) {
+      const nb = neighborhoodByName(s.selNb);
+      if (nb) return safeFit(nb.bounds, 15);
+    }
+    if (s.selZone) {
+      const z = zoneById(s.selZone);
+      if (z) return safeFit(z.bounds, 14);
+    }
+    if (s.selBoro === 'manhattan') return safeFit(MANHATTAN_BOUNDS, 13);
+    if (s.selBoro) {
+      const b = boroughById(s.selBoro);
+      if (b) return safeFit(b.bounds, 12);
+    }
+    safeFit(NYC_BOUNDS, 11);
+  }
   function fitForMode() {
     const s = useTripStore.getState();
     if (s.mode === 'itinerario') fitDay(s.activeDay);
+    else if (s.mode === 'barrios') fitBarrios();
     else safeFit(MANHATTAN_BOUNDS, 13);
   }
 
   // ---- capas ---------------------------------------------------------------
   function addLayers(map: maplibregl.Map) {
     const firstSymbol = map.getStyle().layers?.find((l) => l.type === 'symbol')?.id;
+
+    // Boroughs (nivel ciudad): relleno de color + rayado blanco + borde punteado negro
+    if (!map.hasImage('hatch')) map.addImage('hatch', hatchImage(), { pixelRatio: 2 });
+    map.addSource('boro', { type: 'geojson', data: BOROUGHS_FC as never });
+    map.addLayer(
+      { id: 'boro-fill', type: 'fill', source: 'boro', layout: { visibility: 'none' }, paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.5 } },
+      firstSymbol,
+    );
+    map.addLayer(
+      { id: 'boro-hatch', type: 'fill', source: 'boro', layout: { visibility: 'none' }, paint: { 'fill-pattern': 'hatch', 'fill-opacity': 0.9 } },
+      firstSymbol,
+    );
+    map.addLayer(
+      {
+        id: 'boro-line',
+        type: 'line',
+        source: 'boro',
+        layout: { visibility: 'none', 'line-join': 'round' },
+        paint: { 'line-color': '#26282b', 'line-width': 1.5, 'line-dasharray': [2, 1.6], 'line-opacity': 0.9 },
+      },
+      firstSymbol,
+    );
+    map.addSource('boro-labels', { type: 'geojson', data: regionLabelData(BOROUGHS_FC) });
+    map.addLayer({
+      id: 'boro-labels',
+      type: 'symbol',
+      source: 'boro-labels',
+      layout: {
+        visibility: 'none',
+        'text-field': ['get', 'label'],
+        'text-font': FONT_BOLD,
+        'text-size': 13,
+        'text-letter-spacing': 0.06,
+        'text-max-width': 8,
+      },
+      paint: { 'text-color': '#1c1c1e', 'text-halo-color': '#ffffff', 'text-halo-width': 2.4 },
+    });
+    map.on('click', 'boro-fill', (e) => {
+      const state = useTripStore.getState();
+      if (state.mode !== 'barrios') return;
+      const id = e.features?.[0]?.properties?.id as string | undefined;
+      if (id) state.selectBoro(id);
+    });
+    map.on('mouseenter', 'boro-fill', () => {
+      if (useTripStore.getState().mode === 'barrios') map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'boro-fill', () => (map.getCanvas().style.cursor = ''));
+
+    // Zonas de Manhattan (nivel intermedio): relleno translúcido liso, como el video
+    map.addSource('zones', { type: 'geojson', data: ZONES_FC as never });
+    map.addLayer(
+      { id: 'zone-fill', type: 'fill', source: 'zones', layout: { visibility: 'none' }, paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.38 } },
+      firstSymbol,
+    );
+    map.addLayer(
+      {
+        id: 'zone-line',
+        type: 'line',
+        source: 'zones',
+        layout: { visibility: 'none', 'line-join': 'round', 'line-cap': 'round' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 2, 'line-opacity': 0.95 },
+      },
+      firstSymbol,
+    );
+    map.addSource('zone-labels', { type: 'geojson', data: regionLabelData(ZONES_FC) });
+    map.addLayer({
+      id: 'zone-labels',
+      type: 'symbol',
+      source: 'zone-labels',
+      layout: {
+        visibility: 'none',
+        'text-field': ['get', 'label'],
+        'text-font': FONT_BOLD,
+        'text-size': 12,
+        'text-letter-spacing': 0.04,
+        'text-max-width': 8,
+      },
+      paint: { 'text-color': '#1c1c1e', 'text-halo-color': '#ffffff', 'text-halo-width': 2.2 },
+    });
+    map.on('click', 'zone-fill', (e) => {
+      const state = useTripStore.getState();
+      if (state.mode !== 'barrios') return;
+      const id = e.features?.[0]?.properties?.id as string | undefined;
+      if (id) state.selectZone(id);
+    });
+    map.on('mouseenter', 'zone-fill', () => {
+      if (useTripStore.getState().mode === 'barrios') map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'zone-fill', () => (map.getCanvas().style.cursor = ''));
 
     // Barrios
     map.addSource('nb', { type: 'geojson', data: nbSourceData() });
@@ -343,13 +524,51 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
   }
 
   function syncLayers(map: maplibregl.Map) {
-    const flags = layerFlags(useTripStore.getState());
+    const s = useTripStore.getState();
+    const flags = layerFlags(s);
     const vis = (ids: string[], on: boolean) => {
       for (const id of ids) if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
     };
-    vis(['nb-fill', 'nb-line', 'nb-labels'], flags.nb);
+    const range = (ids: string[], min: number, max: number) => {
+      for (const id of ids) if (map.getLayer(id)) map.setLayerZoomRange(id, min, max);
+    };
+
+    const BORO = ['boro-fill', 'boro-hatch', 'boro-line', 'boro-labels'];
+    const ZONES = ['zone-fill', 'zone-line', 'zone-labels'];
+    const NB = ['nb-fill', 'nb-line', 'nb-labels'];
+    vis(BORO, flags.boro);
+    vis(ZONES, flags.zones);
+    vis(NB, flags.nb);
     vis(['calles-av', 'calles-st', 'calles-labels'], flags.calles);
     vis(['subway-lines', 'subway-stations'], flags.subway);
+
+    // Overlay del itinerario: cada nivel vive en su rango de zoom.
+    // En modo Barrios los niveles se manejan por navegación, sin rangos.
+    if (flags.byZoom) {
+      range(BORO, 0, OVERLAY_ZOOM.boroMax);
+      range(ZONES, OVERLAY_ZOOM.boroMax, OVERLAY_ZOOM.zoneMax);
+      range(NB, OVERLAY_ZOOM.zoneMax, 24);
+    } else {
+      range([...BORO, ...ZONES, ...NB], 0, 24);
+    }
+
+    // Borough seleccionado (ficha): se destaca y el resto se apaga
+    const boroSel = s.mode === 'barrios' && s.selBoro && s.selBoro !== 'manhattan' ? s.selBoro : null;
+    const dim = (on: number, off: number) =>
+      boroSel ? (['case', ['==', ['get', 'id'], boroSel], on, off] as never) : on;
+    if (map.getLayer('boro-fill')) map.setPaintProperty('boro-fill', 'fill-opacity', dim(0.55, 0.14));
+    if (map.getLayer('boro-hatch')) map.setPaintProperty('boro-hatch', 'fill-opacity', dim(0.9, 0.25));
+    if (map.getLayer('boro-line')) map.setPaintProperty('boro-line', 'line-opacity', dim(0.9, 0.35));
+
+    // En el nivel barrios solo se ven los de la zona elegida
+    const names = s.mode === 'barrios' && s.selZone ? zoneBarrios(s.selZone).map((n) => n.name) : null;
+    const nbFilter = names ? (['in', ['get', 'name'], ['literal', names]] as never) : (null as never);
+    if (map.getLayer('nb-fill')) {
+      map.setFilter('nb-fill', nbFilter);
+      map.setFilter('nb-line', nbFilter);
+      map.setFilter('nb-labels', nbFilter);
+    }
+
     syncMarkers(map);
   }
 
@@ -372,12 +591,15 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
       if (!map.isStyleLoaded() && !cancelled) map.setStyle(RASTER_FALLBACK);
     });
 
+    // isStyleLoaded() fluctúa mientras cargan tiles; las capas existen desde el load
+    let layersReady = false;
     map.on('load', () => {
       if (cancelled) return;
       addLayers(map);
       buildMarkers();
       syncLayers(map);
       fitForMode();
+      layersReady = true;
     });
 
     const onResize = () => map.resize();
@@ -386,7 +608,7 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
     ro.observe(containerRef.current);
 
     const unsub = useTripStore.subscribe((state, prev) => {
-      if (!map.isStyleLoaded()) return;
+      if (!layersReady) return;
       if (state.mode !== prev.mode) {
         syncLayers(map);
         fitForMode();
@@ -416,6 +638,10 @@ export function MapView({ isDesktop }: { isDesktop: boolean }) {
             });
           }
         }
+      }
+      if (state.selBoro !== prev.selBoro || state.selZone !== prev.selZone) {
+        syncLayers(map);
+        if (state.mode === 'barrios') fitBarrios();
       }
       if (state.selNb !== prev.selNb && state.selNb) {
         const nb = neighborhoodByName(state.selNb);

@@ -28,6 +28,10 @@ interface TripState {
   activeDay: number | 'all';
   query: string;
   selId: string | null;
+  /** Borough seleccionado en modo Barrios ('manhattan' abre sus zonas). */
+  selBoro: string | null;
+  /** Zona de Manhattan seleccionada (nivel 2). */
+  selZone: string | null;
   selNb: string | null;
   ovBarrios: boolean;
   ovCalles: boolean;
@@ -45,6 +49,8 @@ interface TripState {
   setActiveDay: (d: number | 'all') => void;
   setQuery: (q: string) => void;
   selectPlace: (id: string | null) => void;
+  selectBoro: (id: string | null) => void;
+  selectZone: (id: string | null) => void;
   selectNb: (name: string | null) => void;
   toggleOverlay: (k: 'barrios' | 'calles' | 'subway') => void;
   toggleSubwayGroup: (color: string) => void;
@@ -60,6 +66,8 @@ export const useTripStore = create<TripState>((set, get) => ({
   activeDay: 'all',
   query: '',
   selId: null,
+  selBoro: null,
+  selZone: null,
   selNb: null,
   ovBarrios: false,
   ovCalles: false,
@@ -71,11 +79,20 @@ export const useTripStore = create<TripState>((set, get) => ({
   recenterTick: 0,
 
   setMode: (mode) =>
-    set({ mode, selNb: null, ...(mode !== 'itinerario' ? { selId: null } : null) }),
+    set({ mode, selBoro: null, selZone: null, selNb: null, ...(mode !== 'itinerario' ? { selId: null } : null) }),
   setActiveDay: (activeDay) => set({ activeDay }),
   setQuery: (query) => set({ query }),
   // al cerrar el detalle, el sheet vuelve a media altura (como el prototipo)
   selectPlace: (selId) => set(selId ? { selId, snap: 'full' } : { selId, snap: 'mid' }),
+  // Manhattan baja un nivel (zonas); los otros boroughs abren su ficha
+  selectBoro: (selBoro) =>
+    set({
+      selBoro,
+      selZone: null,
+      selNb: null,
+      snap: selBoro && selBoro !== 'manhattan' ? 'full' : 'mid',
+    }),
+  selectZone: (selZone) => set({ selZone, selNb: null, snap: 'mid' }),
   selectNb: (selNb) => set(selNb ? { selNb, snap: 'full' } : { selNb }),
   toggleOverlay: (k) => {
     const key = { barrios: 'ovBarrios', calles: 'ovCalles', subway: 'ovSubway' }[k] as

@@ -1,6 +1,8 @@
 // Capa de datos geo empaquetados (sin fetch en runtime): barrios reales de Manhattan,
 // líneas y estaciones de subway, y el grid de avenidas/calles para orientarse.
 import nbJson from './geo/neighborhoods.json';
+import boroughsJson from './geo/boroughs.json';
+import zonesJson from './geo/manhattan-zones.json';
 import subLinesJson from './geo/subway-lines.json';
 import subStationsJson from './geo/subway-stations.json';
 import { allStops, type Stop } from './itinerary';
@@ -27,7 +29,19 @@ interface FC<F> {
   features: F[];
 }
 
+/** Props comunes de boroughs y zonas de Manhattan. */
+export interface RegionProps {
+  id: string;
+  name: string;
+  color: string;
+  desc: string;
+  see: string[];
+  center: [number, number];
+}
+
 export const NB_FC = nbJson as FC<Feature<MultiPolygon, NbProps>>;
+export const BOROUGHS_FC = boroughsJson as FC<Feature<MultiPolygon, RegionProps>>;
+export const ZONES_FC = zonesJson as FC<Feature<MultiPolygon, RegionProps>>;
 export const SUBWAY_LINES_FC = subLinesJson as FC<Feature<LineString, { route: string; color: string }>>;
 export const SUBWAY_STATIONS_FC = subStationsJson as FC<Feature<Point, { name: string; lines: string }>>;
 
@@ -138,6 +152,66 @@ export function neighborhoods(): Neighborhood[] {
 }
 
 export const neighborhoodByName = (name: string) => neighborhoods().find((n) => n.name === name);
+
+// ---- Boroughs y zonas de Manhattan (jerarquía: NYC -> zonas -> barrios)
+export interface Region extends RegionProps {
+  bounds: [[number, number], [number, number]];
+  stops: Stop[];
+}
+
+function buildRegions(fc: FC<Feature<MultiPolygon, RegionProps>>): Region[] {
+  return fc.features.map((f) => ({
+    ...f.properties,
+    bounds: featureBounds(f.geometry),
+    stops: allStops().filter((s) => pointInMultiPolygon(s.lng, s.lat, f.geometry)),
+  }));
+}
+
+let _boros: Region[] | null = null;
+export function boroughs(): Region[] {
+  return (_boros ??= buildRegions(BOROUGHS_FC));
+}
+let _zones: Region[] | null = null;
+export function manhattanZones(): Region[] {
+  return (_zones ??= buildRegions(ZONES_FC));
+}
+export const boroughById = (id: string) => boroughs().find((b) => b.id === id);
+export const zoneById = (id: string) => manhattanZones().find((z) => z.id === id);
+
+/** Zona de Manhattan a la que pertenece cada barrio (Central Park y Randall's quedan fuera, como en el video). */
+export const NB_ZONE: Record<string, string> = {
+  'Financial District': 'lower',
+  'Civic Center': 'lower',
+  'The Battery-Governors Island-Ellis Island-Liberty Island': 'lower',
+  'Little Italy': 'lower',
+  Chinatown: 'lower',
+  'Lower East Side': 'lower',
+  'East Village': 'lower',
+  'Greenwich Village': 'lower',
+  'West Village': 'lower',
+  Chelsea: 'midtown',
+  "Hell's Kitchen": 'midtown',
+  Midtown: 'midtown',
+  'Stuyvesant Town-Peter Cooper Village': 'midtown',
+  Gramercy: 'midtown',
+  'Murray Hill': 'midtown',
+  'United Nations': 'midtown',
+  'Upper West Side': 'uws',
+  'Upper East Side': 'ues',
+  'Morningside Heights': 'upper',
+  Harlem: 'upper',
+  'Hamilton Heights': 'upper',
+  'East Harlem': 'upper',
+  'Washington Heights (South)': 'upper',
+  'Washington Heights (North)': 'upper',
+  Inwood: 'upper',
+  'Highbridge Park': 'upper',
+  'Inwood Hill Park': 'upper',
+};
+
+/** Barrios (con ficha) de una zona, para la lista del panel y el filtro del mapa. */
+export const zoneBarrios = (zoneId: string) =>
+  neighborhoods().filter((n) => n.major && NB_ZONE[n.name] === zoneId);
 
 // ---- Estación de subway más cercana a cada parada
 let _nearest: Map<string, string> | null = null;
